@@ -1,0 +1,37 @@
+group llvm;
+
+opToInstr ::= [ // map operators to LLVM IR instructions
+        "+":"add",
+        "-":"sub",
+        "*":"mul",
+        "/":"sdiv",
+        "==":"icmp eq",
+        "!=":"icmp ne",
+        "<":"icmp slt",
+        ">":"icmp sgt",
+        "<=":"icmp sle",
+        ">=":"icmp sge"
+]
+
+javaToLlvm ::= [ // map minijava types to llvm types
+        "int":"i32",
+        "boolean":"i1"
+]
+
+addOrSub(reg, op, lhs, rhs) ::= <<
+%<reg> = <opToInstr.(op)> i32 <lhs>, <rhs>
+>>
+
+llvmNamedValue(id, type) ::= << %<id> = <type> >>
+
+methodDecl(ret, name, classType, formals) ::= <<
+define <javaToLlvm.(ret)> @__<name>_<classType>(%class.<name> * %this<if(formals)>, <formals:{ f | <f.type> %<f.name>}; separator=", "><endif>)
+>>
+
+identifier(id, type, val) ::= <<
+%<id> = <type> *
+>>
+
+classDecl(name, superClass, vars) ::= <<
+%class.<name> = type { <if(superClass)>%class.<superClass>, <endif><vars:{v | <if(javaToLlvm.(v))><javaToLlvm.(v)><else>%class.<v> *<endif>};separator=", "> }
+>>

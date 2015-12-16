@@ -6,8 +6,7 @@ classDecl: 'class' identifier '{' varDecl* methodDecl* '}';
 classDeclExtends: 'class' identifier 'extends' identifier '{' varDecl* methodDecl* '}';
 varDecl: type identifier ';';
 methodDecl: 'public' type identifier '(' formalList ')' '{' varDecl* statement* 'return' exp ';' '}';
-formalList: type identifier formalRest* | ;
-formalRest: ',' type identifier;
+formalList: (type identifier)? (',' type identifier)*  | ;
 type: 'int[]' # ArrayType
     | 'boolean' # BooleanType
     | 'int' # IntegerType
